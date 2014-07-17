@@ -162,15 +162,16 @@ describe("Map", function () {
 
 			expect(fire.calledWith('zoomstart')).to.equal(true);
 
-			map.on('zoomend', function() {
-				expect(fire.calledWith('zoomanim')).to.equal(true);
-				done();
-			});
-
+			/* Don't expect a zoomanim event is animation is disabled. */
 			if (!map._zoomAnimated) {
 				expect(fire.calledWith('zoomend')).to.equal(true);
 				done();
 			}
+
+			map.on('zoomend', function() {
+				expect(fire.calledWith('zoomanim')).to.equal(true);
+				done();
+			});			
 		});
 	});	
 
