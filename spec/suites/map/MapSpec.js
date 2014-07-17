@@ -129,6 +129,51 @@ describe("Map", function () {
 		});
 	});
 
+	describe("#setZoom", function() {
+		it("fires zoomstart and zoomend events.", function() {
+			var container = document.createElement('div'),
+				center = L.latLng(10, 10),
+				initialZoom = 14,
+				fire = sinon.spy(L.Map.prototype, "fire"),
+				map = L.map(container, { center: center, zoom: initialZoom });
+
+			fire.reset();
+			map.setZoom(initialZoom - 1);
+
+			expect(fire.calledWith('zoomstart')).to.equal(true);
+			expect(fire.calledWith('zoomend')).to.equal(true);
+
+			fire.restore();
+		});
+
+		it("When animated zoom is enabled, fires zoomanim event.", function(done) {
+			var container = document.createElement('div'),
+				zoomAnimated = document.createElement('div'),
+				center = L.latLng(10, 10),
+				initialZoom = 14,
+				fire = sinon.spy(L.Map.prototype, "fire"),
+				map = L.map(container, { center: center, zoom: initialZoom });
+
+			/* There has to be something to animate in order for _animateZoom to be called */	
+			zoomAnimated.setAttribute('class', 'leaflet-zoom-animated');
+			map._container.appendChild(zoomAnimated);
+
+			map.setZoom(initialZoom - 1);
+
+			expect(fire.calledWith('zoomstart')).to.equal(true);
+
+			map.on('zoomend', function() {
+				expect(fire.calledWith('zoomanim')).to.equal(true);
+				done();
+			});
+
+			if (!map._zoomAnimated) {
+				expect(fire.calledWith('zoomend')).to.equal(true);
+				done();
+			}
+		});
+	});	
+
 	describe("#getBounds", function () {
 		it("is safe to call from within a moveend callback during initial load (#1027)", function () {
 			map.on("moveend", function () {
