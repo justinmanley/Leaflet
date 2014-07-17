@@ -162,7 +162,7 @@ describe("Map", function () {
 
 			expect(fire.calledWith('zoomstart')).to.equal(true);
 
-			/* Don't expect a zoomanim event is animation is disabled. */
+			/* Don't expect a zoomanim event if animation is disabled. */
 			if (!map._zoomAnimated) {
 				expect(fire.calledWith('zoomend')).to.equal(true);
 				done();
