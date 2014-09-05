@@ -34,7 +34,7 @@ L.GeoJSON = L.FeatureGroup.extend({
 		if (options.filter && !options.filter(geojson)) { return; }
 
 		var layer = L.GeoJSON.geometryToLayer(geojson, options);
-		layer.feature = L.GeoJSON.asFeature(geojson);
+		layer.feature = L.GeoJSON.asFeature(geojson, this.options.propertiesToGeoJSON);
 
 		layer.defaultOptions = layer.options;
 		this.resetStyle(layer);
@@ -163,14 +163,14 @@ L.extend(L.GeoJSON, {
 				L.GeoJSON.asFeature(newGeometry);
 	},
 
-	asFeature: function (geoJSON) {
+	asFeature: function (geoJSON, propertiesToGeoJSON) {
 		if (geoJSON.type === 'Feature') {
 			return geoJSON;
 		}
 
 		return {
 			type: 'Feature',
-			properties: {},
+			properties: propertiesToGeoJSON ? propertiesToGeoJSON() : {},
 			geometry: geoJSON
 		};
 	}
